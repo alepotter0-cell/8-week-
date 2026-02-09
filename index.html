@@ -3,33 +3,633 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>8 Week Fitness Transformation Program</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #1e293b;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #7dd3fc;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #7dd3fc;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .hero-accent {
+            color: #7dd3fc;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+        }
+
+        /* Video Section */
+        .video-section {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(125, 211, 252, 0.1);
+            border: 2px solid #7dd3fc;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7dd3fc;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: linear-gradient(135deg, #7dd3fc 0%, #06b6d4 100%);
+            color: #0f172a;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 2rem;
+            box-shadow: 0 10px 25px rgba(125, 211, 252, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(125, 211, 252, 0.4);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: #1e293b;
+            padding: 4rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .testimonials-accent {
+            color: #7dd3fc;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background-color: #0f172a;
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid #7dd3fc;
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stars {
+            color: #7dd3fc;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: #7dd3fc;
+        }
+
+        .testimonial-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* Waitlist Section */
+        .waitlist-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .waitlist-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .waitlist-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .waitlist-section p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+        }
+
+        .waitlist-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-input {
+            padding: 1rem;
+            border: 2px solid #7dd3fc;
+            border-radius: 8px;
+            background-color: #0f172a;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 10px rgba(125, 211, 252, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1e293b;
+            padding: 2rem;
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 3rem;
+            border-top: 1px solid #334155;
+        }
+
+        /* Stripe Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid #7dd3fc;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: #7dd3fc;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #7dd3fc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #06b6d4;
+        }
+
+        #card-element {
+            border: 2px solid #334155;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            background-color: #0f172a;
+        }
+
+        #card-errors {
+            color: #ff6b6b;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #7dd3fc 0%, #06b6d4 100%);
+            color: #0f172a;
+            padding: 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(125, 211, 252, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .testimonials h2,
+            .waitlist-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <h1>Welcome to Our Landing Page</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
+        <div class="header-container">
+            <div class="logo">🏋️ 8 Week Transformation</div>
+            <nav>
+                <a href="#testimonials">Success Stories</a>
+                <a href="#waitlist">Contact</a>
+            </nav>
+        </div>
     </header>
-    <main>
-        <section>
-            <h2>About Us</h2>
-            <p>This is a brief description about our landing page.</p>
-        </section>
-        <section>
-            <h2>Our Services</h2>
-            <p>Details about the services we offer.</p>
-        </section>
-    </main>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>Transform Your Body in <span class="hero-accent">8 Weeks</span></h1>
+            <p class="hero-subtitle">Join hundreds of people who've achieved their fitness goals with our proven training program</p>
+        </div>
+    </section>
+
+    <!-- Video Sales Letter -->
+    <section class="video-section">
+        <div class="video-container">
+            <div class="video-placeholder">Replace this with your YouTube video link in the iframe below</div>
+            <!-- Replace the src with your actual YouTube video URL -->
+            <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe> -->
+        </div>
+        <div style="text-align: center;">
+            <button class="cta-button" onclick="openStripeModal()">🎯 Start Your Transformation - Sign Up Now</button>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2>Client <span class="testimonials-accent">Success Stories</span></h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"I lost 20 pounds and feel stronger than ever. The 8-week program is structured perfectly and the support is amazing!"</p>
+                <div class="testimonial-author">Sarah Johnson</div>
+                <div class="testimonial-title">Lost 20 lbs in 8 weeks</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"As someone with zero fitness experience, I felt welcomed and guided through every step. Highly recommend!"</p>
+                <div class="testimonial-author">Mike Chen</div>
+                <div class="testimonial-title">Beginner to gym confident</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"The results speak for themselves. I've never felt better. The nutrition guidance paired with the workouts is a game-changer."</p>
+                <div class="testimonial-author">Emma Williams</div>
+                <div class="testimonial-title">5-star transformation</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"I've tried many programs before, but this is the first one where I actually stuck with it. The community kept me motivated!"</p>
+                <div class="testimonial-author">David Martinez</div>
+                <div class="testimonial-title">Completed the full 8 weeks</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Not just a workout program - it's a complete lifestyle transformation. I'm 6 months in and still seeing progress!"</p>
+                <div class="testimonial-author">Jessica Lee</div>
+                <div class="testimonial-title">Program graduate</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"The personalized approach made all the difference. No generic advice, just real results. Changed my life!"</p>
+                <div class="testimonial-author">Robert Taylor</div>
+                <div class="testimonial-title">30-lbs transformation</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist/Inquiry Section -->
+    <section class="waitlist-section" id="waitlist">
+        <div class="waitlist-container">
+            <h2>Join Our <span class="hero-accent">Next Cohort</span></h2>
+            <p>Limited spots available. Get on the waitlist or send us an inquiry today!</p>
+            
+            <form class="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
+                <input type="text" class="form-input" placeholder="Your Name" required>
+                <input type="email" class="form-input" placeholder="Your Email" required>
+                <textarea class="form-input form-textarea" placeholder="Tell us about your fitness goals..." required></textarea>
+                <button type="submit" class="cta-button" style="margin-top: 0; display: block;">Join Waitlist / Send Inquiry</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Your Company Name. All rights reserved.</p>
+        <p>&copy; 2026 8 Week Fitness Transformation Program. All rights reserved.</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Stripe test mode enabled for development</p>
     </footer>
+
+    <!-- Stripe Payment Modal -->
+    <div id="stripeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Complete Your Registration</h2>
+                <button type="button" class="close-btn" onclick="closeStripeModal()">×</button>
+            </div>
+            
+            <form id="payment-form" onsubmit="handlePayment(event)">
+                <label for="email" style="color: #cbd5e1;">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
+
+                <label for="name" style="color: #cbd5e1; display: block; margin-top: 1rem;">Full Name</label>
+                <input type="text" id="name" class="form-input" placeholder="John Doe" required>
+
+                <label style="color: #cbd5e1; display: block; margin-top: 1rem;">Card Details</label>
+                <div id="card-element"></div>
+                <div id="card-errors" role="alert"></div>
+
+                <div style="color: #cbd5e1; margin: 1.5rem 0; padding: 1rem; background-color: #0f172a; border-radius: 8px;">
+                    <strong>Program Price:</strong> $497
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem;">8-week complete fitness transformation program</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">Complete Purchase - $497</button>
+            </form>
+
+            <p style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 1rem;">
+                🔒 Secure payment powered by Stripe. Your information is encrypted and safe.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Stripe (use your publishable key)
+        const stripe = Stripe('pk_test_51234567890abcdefghijklmnopqrstuvwxyz');
+        let cardElement;
+
+        // Initialize card element when modal opens
+        function initializeCardElement() {
+            if (cardElement) return;
+            const elements = stripe.elements();
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#ffffff',
+                        fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#64748b',
+                        },
+                    },
+                    invalid: {
+                        color: '#ff6b6b',
+                    }
+                }
+            });
+            cardElement.mount('#card-element');
+
+            cardElement.addEventListener('change', (event) => {
+                const displayError = document.getElementById('card-errors');
+                displayError.textContent = event.error ? event.error.message : '';
+            });
+        }
+
+        function openStripeModal() {
+            document.getElementById('stripeModal').classList.add('active');
+            initializeCardElement();
+        }
+
+        function closeStripeModal() {
+            document.getElementById('stripeModal').classList.remove('active');
+        }
+
+        async function handlePayment(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+
+            try {
+                // In production, create a payment intent on your backend
+                // For now, this shows the payment flow structure
+                const { token, error } = await stripe.createToken(cardElement, {
+                    name: name,
+                    email: email
+                });
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Complete Purchase - $497';
+                } else {
+                    // In production, send token to your backend to create a charge
+                    console.log('Payment successful! Token:', token);
+                    alert(`Welcome to the 8 Week Program, ${name}!\n\nIn production, this would process the payment and send you a confirmation email.\n\nToken: ${token.id}`);
+                    closeStripeModal();
+                    // Reset form
+                    document.getElementById('payment-form').reset();
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Complete Purchase - $497';
+                }
+            } catch (error) {
+                document.getElementById('card-errors').textContent = 'An error occurred. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Complete Purchase - $497';
+            }
+        }
+
+        function handleWaitlistSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.querySelector('input[type="text"]').value;
+            const email = form.querySelector('input[type="email"]').value;
+            
+            alert(`Thank you for your interest, ${name}!\n\nWe've added you to our waitlist and will send a confirmation to ${email}.\n\nWe'll be in touch soon with the next cohort starting date!`);
+            form.reset();
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('stripeModal');
+            if (event.target === modal) {
+                closeStripeModal();
+            }
+        }
+    </script>
 </body>
 </html>
